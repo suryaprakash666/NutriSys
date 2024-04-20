@@ -1,14 +1,19 @@
-from flask import Flask, render_template
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from route import recommendation_bp
+from models import db
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:suryabhai64@localhost:3306/nutrisys'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-@app.route('/nutrisys')
-def homeview():
-    return 'Welcome to Nutrition Recommendation System!'
+# Register Blueprints
+app.register_blueprint(recommendation_bp)
 
-@app.route('/myview')
-def myhomeview():
-    return render_template('mypage.html')
+# Initialize SQLAlchemy
+db.init_app(app)
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
